@@ -111,10 +111,17 @@ BOOL CCaptureDlg::OnInitDialog()
     m_btnRecordStart.EnableWindow(FALSE);
     m_btnRecordStop.EnableWindow(FALSE);
 
-    m_staticCapture[0].SetDialogTypeAndIndex(DialogType_Capture, 1);
-    m_staticCapture[1].SetDialogTypeAndIndex(DialogType_Capture, 2);
-    m_staticCapture[2].SetDialogTypeAndIndex(DialogType_Capture, 3);
-    m_staticCapture[3].SetDialogTypeAndIndex(DialogType_Capture, 4);
+    for (int i = 0; i < CAPTURE_NUM; i++) {
+        m_staticCapture[i].SetDialogTypeAndIndex(DialogType_Capture, i + 1);
+
+        //CBitmap bgBitmap;
+        //bgBitmap.LoadBitmap(IDB_BITMAP_BG);
+        //HBITMAP hBmp = (HBITMAP)bgBitmap.GetSafeHandle();
+        m_staticCapture[i].GetWindowRect(&rect);
+        HBITMAP hBmp = (HBITMAP)::LoadImage(0, _T("res\\bg.bmp"), IMAGE_BITMAP, rect.Width(), rect.Height(), LR_LOADFROMFILE);
+        m_staticCapture[i].ModifyStyle(NULL, SS_BITMAP);
+        m_staticCapture[i].SetBitmap(hBmp);
+    }
 
     m_nCurPlaySel = 0;
     m_staticCurCapture = &m_staticCapture[0];

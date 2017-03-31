@@ -286,9 +286,10 @@
     <ResourceCompile Include="CaptureRecord.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\main-big.ico" />
-    <Image Include="res\main-mid.ico" />
-    <Image Include="res\main-small.ico" />
+    <Image Include="res\bg.bmp" />
+    <Image Include="res\main_big.ico" />
+    <Image Include="res\main_mid.ico" />
+    <Image Include="res\main_small.ico" />
     <Image Include="res\progress-bar.png" />
     <Image Include="res\progress.png" />
   </ItemGroup>

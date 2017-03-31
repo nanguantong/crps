@@ -61,14 +61,10 @@ CVideoSettingsDlg::CVideoSettingsDlg(CWnd* pParent /*=NULL*/)
     m_bHardwareEncode = TRUE;
     m_bRecordMp4 = TRUE;
 
-    m_nVD1Sel = 0;
-    m_nVD2Sel = 0;
-    m_nVD3Sel = 0;
-    m_nVD4Sel = 0;
-    m_nAD1Sel = 0;
-    m_nAD2Sel = 0;
-    m_nAD3Sel = 0;
-    m_nAD4Sel = 0;
+    for (int i = 0; i < CAPTURE_NUM; i++) {
+        m_nVDSel[i] = 0;
+        m_nADSel[i] = 0;
+    }
 }
 
 CVideoSettingsDlg::~CVideoSettingsDlg()
@@ -78,14 +74,14 @@ CVideoSettingsDlg::~CVideoSettingsDlg()
 void CVideoSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialog::DoDataExchange(pDX);
-    DDX_Control(pDX, IDC_COMBO_VIDEO_DEVICE1, m_cmbVD1);
-    DDX_Control(pDX, IDC_COMBO_VIDEO_DEVICE2, m_cmbVD2);
-    DDX_Control(pDX, IDC_COMBO_VIDEO_DEVICE3, m_cmbVD3);
-    DDX_Control(pDX, IDC_COMBO_VIDEO_DEVICE4, m_cmbVD4);
-    DDX_Control(pDX, IDC_COMBO_AUDIO_DEVICE1, m_cmbAD1);
-    DDX_Control(pDX, IDC_COMBO_AUDIO_DEVICE2, m_cmbAD2);
-    DDX_Control(pDX, IDC_COMBO_AUDIO_DEVICE3, m_cmbAD3);
-    DDX_Control(pDX, IDC_COMBO_AUDIO_DEVICE4, m_cmbAD4);
+    DDX_Control(pDX, IDC_COMBO_VIDEO_DEVICE1, m_cmbVD[0]);
+    DDX_Control(pDX, IDC_COMBO_VIDEO_DEVICE2, m_cmbVD[1]);
+    DDX_Control(pDX, IDC_COMBO_VIDEO_DEVICE3, m_cmbVD[2]);
+    DDX_Control(pDX, IDC_COMBO_VIDEO_DEVICE4, m_cmbVD[3]);
+    DDX_Control(pDX, IDC_COMBO_AUDIO_DEVICE1, m_cmbAD[0]);
+    DDX_Control(pDX, IDC_COMBO_AUDIO_DEVICE2, m_cmbAD[1]);
+    DDX_Control(pDX, IDC_COMBO_AUDIO_DEVICE3, m_cmbAD[2]);
+    DDX_Control(pDX, IDC_COMBO_AUDIO_DEVICE4, m_cmbAD[3]);
 
     DDX_Check(pDX, IDC_CHECK_HARDWARE_ENCODE, m_bHardwareEncode);
     DDX_Check(pDX, IDC_CHECK_RECORD_MP4, m_bRecordMp4);
@@ -272,10 +268,10 @@ void CVideoSettingsDlg::OnBnClickedOk()
         childView.m_dFrameRate != m_fDefaultRate)) || 
         childView.m_strRecordPath != m_strRecordPath ||
         childView.m_strSnapshotPath != m_strSnapshotPath || 
-        m_nVD1Sel != m_cmbVD1.GetCurSel() || m_nAD1Sel != m_cmbAD1.GetCurSel() ||
-        m_nVD2Sel != m_cmbVD2.GetCurSel() || m_nAD2Sel != m_cmbAD2.GetCurSel() ||
-        m_nVD3Sel != m_cmbVD3.GetCurSel() || m_nAD3Sel != m_cmbAD3.GetCurSel() ||
-        m_nVD4Sel != m_cmbVD4.GetCurSel() || m_nAD4Sel != m_cmbAD4.GetCurSel() ) {
+        m_nVDSel[0] != m_cmbVD[0].GetCurSel() || m_nADSel[0] != m_cmbAD[0].GetCurSel() ||
+        m_nVDSel[1] != m_cmbVD[1].GetCurSel() || m_nADSel[1] != m_cmbAD[1].GetCurSel() ||
+        m_nVDSel[2] != m_cmbVD[2].GetCurSel() || m_nADSel[2] != m_cmbAD[2].GetCurSel() ||
+        m_nVDSel[3] != m_cmbVD[3].GetCurSel() || m_nADSel[3] != m_cmbAD[3].GetCurSel()) {
 
         if (childView.m_bRecording) {
             if (IDOK != AfxMessageBox(_T("正在录制中，是否重新设置参数?"), MB_OKCANCEL | MB_ICONINFORMATION)) {
@@ -290,14 +286,10 @@ void CVideoSettingsDlg::OnBnClickedOk()
         childView.m_strRecordPath = m_strRecordPath;
         childView.m_strSnapshotPath = m_strSnapshotPath;
 
-        m_nVD1Sel = m_cmbVD1.GetCurSel();
-        m_nVD2Sel = m_cmbVD2.GetCurSel();
-        m_nVD3Sel = m_cmbVD3.GetCurSel();
-        m_nVD4Sel = m_cmbVD4.GetCurSel();
-        m_nAD1Sel = m_cmbAD1.GetCurSel();
-        m_nAD2Sel = m_cmbAD2.GetCurSel();
-        m_nAD3Sel = m_cmbAD3.GetCurSel();
-        m_nAD4Sel = m_cmbAD4.GetCurSel();
+        for (int i = 0; i < CAPTURE_NUM; i++) {
+            m_nVDSel[i] = m_cmbVD[i].GetCurSel();
+            m_nADSel[i] = m_cmbAD[i].GetCurSel();
+        }
 
         // Save file path
         CIniFile iniFile(CONFIG_FILE_NAME);
@@ -360,97 +352,35 @@ void CVideoSettingsDlg::OnCbnSelchangeComboVideoDevice4()
 }
 
 void CVideoSettingsDlg::SetVideoComboxItem(int nChannel, int nIndex, LPCTSTR lpszValue) {
-    if (nChannel < 0 || nIndex < 0 || !lpszValue)
+    if (nChannel < 0 || nChannel >= CAPTURE_NUM || nIndex < 0 || !lpszValue)
         return;
 
-    switch (nChannel)
-    {
-    case 0:
-        m_cmbVD1.InsertString(nIndex, lpszValue);
-        m_cmbVD1.SetCurSel(0);
-        break;
-    case 1:
-        m_cmbVD2.InsertString(nIndex, lpszValue);
-        m_cmbVD2.SetCurSel(0);
-        break;
-    case 2:
-        m_cmbVD3.InsertString(nIndex, lpszValue);
-        m_cmbVD3.SetCurSel(0);
-        break;
-    case 3:
-        m_cmbVD4.InsertString(nIndex, lpszValue);
-        m_cmbVD4.SetCurSel(0);
-        break;
-    default:
-        break;
-    }
+    m_cmbVD[nChannel].InsertString(nIndex, lpszValue);
+    m_cmbVD[nChannel].SetCurSel(0);
 }
 
 void CVideoSettingsDlg::SetAudioComboxItem(int nChannel, int nIndex, LPCTSTR lpszValue) {
-    if (nChannel < 0 || nIndex < 0 || !lpszValue)
+    if (nChannel < 0 || nChannel >= CAPTURE_NUM || nIndex < 0 || !lpszValue)
         return;
 
-    switch (nChannel)
-    {
-    case 0:
-        m_cmbAD1.InsertString(nIndex, lpszValue);
-        m_cmbAD1.SetCurSel(0);
-        break;
-    case 1:
-        m_cmbAD2.InsertString(nIndex, lpszValue);
-        m_cmbAD2.SetCurSel(0);
-        break;
-    case 2:
-        m_cmbAD3.InsertString(nIndex, lpszValue);
-        m_cmbAD3.SetCurSel(0);
-        break;
-    case 3:
-        m_cmbAD4.InsertString(nIndex, lpszValue);
-        m_cmbAD4.SetCurSel(0);
-        break;
-    default:
-        break;
-    }
+    m_cmbAD[nChannel].InsertString(nIndex, lpszValue);
+    m_cmbAD[nChannel].SetCurSel(0);
 }
 
 void CVideoSettingsDlg::SetEnableAVCombox(BOOL bEnable) {
-    m_cmbVD1.EnableWindow(bEnable);
-    m_cmbVD2.EnableWindow(bEnable);
-    m_cmbVD3.EnableWindow(bEnable);
-    m_cmbVD4.EnableWindow(bEnable);
-
-    m_cmbAD1.EnableWindow(bEnable);
-    m_cmbAD2.EnableWindow(bEnable);
-    m_cmbAD3.EnableWindow(bEnable);
-    m_cmbAD4.EnableWindow(bEnable);
+    for (int i = 0; i < CAPTURE_NUM; i++) {
+        m_cmbVD[i].EnableWindow(bEnable);
+        m_cmbAD[i].EnableWindow(bEnable);
+    }
 }
 
 BOOL CVideoSettingsDlg::GetVideoAvailable(int nChannel) {
-    if (nChannel < 0)
+    if (nChannel < 0 || nChannel >= CAPTURE_NUM)
         return FALSE;
 
     CString str;
-    switch (nChannel)
-    {
-    case 0:
-        m_cmbVD1.GetWindowText(str);
-        //m_cmbVD1.GetLBText(m_cmbVD1.GetCurSel(), str);
-        break;
-    case 1:
-        m_cmbVD2.GetWindowText(str);
-        //m_cmbVD2.GetLBText(m_cmbVD2.GetCurSel(), str);
-        break;
-    case 2:
-        m_cmbVD3.GetWindowText(str);
-        //m_cmbVD3.GetLBText(m_cmbVD3.GetCurSel(), str);
-        break;
-    case 3:
-        m_cmbVD4.GetWindowText(str);
-        //m_cmbVD4.GetLBText(m_cmbVD4.GetCurSel(), str);
-        break;
-    default:
-        break;
-    }
+    m_cmbVD[nChannel].GetWindowText(str);
+    //m_cmbVD[nChannel].GetLBText(m_cmbVD[nChannel].GetCurSel(), str);
 
     if (str.IsEmpty() || str.Compare(NO_DEVIDE_INFO) == 0)
         return FALSE;
@@ -459,31 +389,12 @@ BOOL CVideoSettingsDlg::GetVideoAvailable(int nChannel) {
 }
 
 BOOL CVideoSettingsDlg::GetAudioAvailable(int nChannel) {
-    if (nChannel < 0)
+    if (nChannel < 0 || nChannel >= CAPTURE_NUM)
         return FALSE;
 
     CString str;
-    switch (nChannel)
-    {
-    case 0:
-        m_cmbAD1.GetWindowText(str);
-        //m_cmbAD1.GetLBText(m_cmbAD1.GetCurSel(), str);
-        break;
-    case 1:
-        m_cmbAD2.GetWindowText(str);
-        //m_cmbAD2.GetLBText(m_cmbAD2.GetCurSel(), str);
-        break;
-    case 2:
-        m_cmbAD3.GetWindowText(str);
-        //m_cmbAD3.GetLBText(m_cmbAD3.GetCurSel(), str);
-        break;
-    case 3:
-        m_cmbAD4.GetWindowText(str);
-        //m_cmbAD4.GetLBText(m_cmbAD4.GetCurSel(), str);
-        break;
-    default:
-        break;
-    }
+    m_cmbAD[nChannel].GetWindowText(str);
+    //m_cmbAD[nChannel].GetLBText(m_cmbAD[nChannel].GetCurSel(), str);
 
     if (str.IsEmpty() || str.Compare(NO_DEVIDE_INFO) == 0)
         return FALSE;

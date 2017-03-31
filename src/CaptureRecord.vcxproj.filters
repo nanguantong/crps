@@ -94,12 +94,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Toolbar.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\Toolbar256.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="res\CaptureRecord.ico">
       <Filter>Resource Files</Filter>
     </None>
@@ -114,19 +108,22 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\main-big.ico">
+    <Image Include="res\main_big.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\main-small.ico">
+    <Image Include="res\main_small.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\main-mid.ico">
+    <Image Include="res\main_mid.ico">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\progress-bar.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\progress.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bg.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

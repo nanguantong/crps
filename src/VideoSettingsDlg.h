@@ -16,24 +16,24 @@
 
 class CVideoSettingsDlg : public CDialog
 {
-	DECLARE_DYNAMIC(CVideoSettingsDlg)
+    DECLARE_DYNAMIC(CVideoSettingsDlg)
 
 public:
-	CVideoSettingsDlg(CWnd* pParent = NULL);   // standard constructor
-	virtual ~CVideoSettingsDlg();
+    CVideoSettingsDlg(CWnd* pParent = NULL);   // standard constructor
+    virtual ~CVideoSettingsDlg();
 
-// Dialog Data
-	enum { IDD = IDD_DIALOG_VIDEO };
-
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-	DECLARE_MESSAGE_MAP()
+    // Dialog Data
+    enum { IDD = IDD_DIALOG_VIDEO };
 
 protected:
-	virtual BOOL OnInitDialog();
-	afx_msg void OnBnClickedCheckHardwareEncode();
-	afx_msg void OnBnClickedOk();
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+    DECLARE_MESSAGE_MAP()
+
+protected:
+    virtual BOOL OnInitDialog();
+    afx_msg void OnBnClickedCheckHardwareEncode();
+    afx_msg void OnBnClickedOk();
     afx_msg void OnBnClickedBtnModifyPath();
     afx_msg void OnBnClickedCheckRecordMp4();
     afx_msg void OnCbnSelchangeComboVideoDevice1();
@@ -54,14 +54,8 @@ public:
     BOOL GetAudioAvailable(int nChannel);
 
 public:
-    CComboBox       m_cmbVD1;
-    CComboBox       m_cmbVD2;
-    CComboBox       m_cmbVD3;
-    CComboBox       m_cmbVD4;
-    CComboBox       m_cmbAD1;
-    CComboBox       m_cmbAD2;
-    CComboBox       m_cmbAD3;
-    CComboBox       m_cmbAD4;
+    CComboBox       m_cmbVD[CAPTURE_NUM];
+    CComboBox       m_cmbAD[CAPTURE_NUM];
 
     CComboBox       m_cmbVideoSize;
     CComboBox       m_cmbVideoRate;
@@ -74,21 +68,14 @@ public:
 
     BOOL            m_bHardwareEncode;
 
-    SIZE    	    m_siDefault;
-    double	        m_fDefaultRate;
+    SIZE            m_siDefault;
+    double          m_fDefaultRate;
 
     BOOL            m_bRecordMp4;
     CString         m_strFilepath;
     CString         m_strRecordPath;
     CString         m_strSnapshotPath;
 
-    int             m_nVD1Sel;
-    int             m_nVD2Sel;
-    int             m_nVD3Sel;
-    int             m_nVD4Sel;
-
-    int             m_nAD1Sel;
-    int             m_nAD2Sel;
-    int             m_nAD3Sel;
-    int             m_nAD4Sel;
+    int             m_nVDSel[CAPTURE_NUM];
+    int             m_nADSel[CAPTURE_NUM];
 };
